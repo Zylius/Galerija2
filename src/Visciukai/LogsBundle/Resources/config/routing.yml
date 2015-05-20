@@ -1,0 +1,3 @@
+visciukai_logs_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: VisciukaiLogsBundle:Default:index }

@@ -1,3 +1,11 @@
+visciukai_logs:
+    resource: "@VisciukaiLogsBundle/Resources/config/routing.yml"
+    prefix:   /
+
+visciukai_images:
+    resource: "@VisciukaiImagesBundle/Resources/config/routing.yml"
+    prefix:   /
+
 visciukai_galerija:
     resource: "@VisciukaiGalerijaBundle/Resources/config/routing.yml"
     prefix:   /

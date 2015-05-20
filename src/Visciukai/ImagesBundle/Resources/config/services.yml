@@ -1,0 +1,4 @@
+services:
+#    visciukai_images.example:
+#        class: Visciukai\ImagesBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

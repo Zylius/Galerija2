@@ -1,0 +1,4 @@
+services:
+#    visciukai_logs.example:
+#        class: Visciukai\LogsBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

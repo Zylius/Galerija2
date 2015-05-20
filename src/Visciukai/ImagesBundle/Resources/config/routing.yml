@@ -1,0 +1,3 @@
+visciukai_images_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: VisciukaiImagesBundle:Images:index }
