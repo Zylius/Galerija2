@@ -34,10 +34,11 @@ class Album
     /**
      * @var Image[]|ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="\Visciukai\ImagesBundle\Entity\Image", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="\Visciukai\ImagesBundle\Entity\Image", mappedBy="album")
      * @ORM\OrderBy({"id" = "ASC"})
      */
     private $images;
+
     /**
      * Constructor
      */

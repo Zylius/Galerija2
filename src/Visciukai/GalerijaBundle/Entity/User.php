@@ -61,6 +61,7 @@ class User extends BaseUser
      */
     public function __construct()
     {
+        parent::__construct();
         $this->images = new ArrayCollection();
         $this->searches = new ArrayCollection();
         $this->uploadErrors = new ArrayCollection();

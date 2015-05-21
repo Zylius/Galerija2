@@ -1,0 +1,30 @@
+images:
+    path:     /
+    defaults: { _controller: "VisciukaiImagesBundle:Image:index" }
+
+images_show:
+    path:     /{id}/show
+    defaults: { _controller: "VisciukaiImagesBundle:Image:show" }
+
+images_new:
+    path:     /new
+    defaults: { _controller: "VisciukaiImagesBundle:Image:new" }
+
+images_create:
+    path:     /create
+    defaults: { _controller: "VisciukaiImagesBundle:Image:create" }
+    methods:  POST
+
+images_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "VisciukaiImagesBundle:Image:edit" }
+
+images_update:
+    path:     /{id}/update
+    defaults: { _controller: "VisciukaiImagesBundle:Image:update" }
+    methods:  [POST, PUT]
+
+images_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "VisciukaiImagesBundle:Image:delete" }
+    methods:  [POST, DELETE]
