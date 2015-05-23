@@ -17,6 +17,31 @@ use Visciukai\LogsBundle\Entity\UserAction;
 class CommentController extends Controller
 {
 
+    public function reportAction(Request $request, $id)
+    {
+        $query = $this->getDoctrine()->getEntityManager()
+            ->createQuery(
+                'SELECT u FROM VisciukaiGalerijaBundle:User u WHERE u.roles LIKE :role'
+            )->setParameter('role', '%"ROLE_SUPER_ADMIN"%');
+
+        $users = $query->getResult();
+
+        foreach($users as $user) {
+            $message = \Swift_Message::newInstance()
+                ->setSubject('Comment Reported')
+                ->setTo($user->getEmail())
+                ->setBody(
+                    $this->renderView(
+                        'VisciukaiGalerijaBundle:Comment:report.html.twig',
+                        array('id' => $id)
+                    ),
+                    'text/html'
+                )
+            ;
+            $this->get('mailer')->send($message);
+        }
+        return $this->redirect($request->headers->get('referer'));
+    }
     /**
      * Lists all Comment entities.
      *
@@ -88,7 +113,7 @@ class CommentController extends Controller
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Komentuoti'));
 
         return $form;
     }
@@ -135,7 +160,7 @@ class CommentController extends Controller
      * Displays a form to edit an existing Comment entity.
      *
      */
-    public function editAction($id)
+    public function editAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -145,13 +170,17 @@ class CommentController extends Controller
             throw $this->createNotFoundException('Unable to find Comment entity.');
         }
 
+        $securityContext = $this->container->get('security.context');
+        if ($this->getUser() !== $entity->getUser() && !$securityContext->isGranted('ROLE_SUPER_ADMIN')) {
+            $this->addFlash('error', 'Tiktai super administratorius arba kurėjas gali atlikti šią operaciją.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
         $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('VisciukaiGalerijaBundle:Comment:edit.html.twig', array(
             'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            'form'   => $editForm->createView(),
         ));
     }
 
@@ -169,7 +198,7 @@ class CommentController extends Controller
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Atnaujinti'));
 
         return $form;
     }
@@ -187,21 +216,21 @@ class CommentController extends Controller
             throw $this->createNotFoundException('Unable to find Comment entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
         $editForm = $this->createEditForm($entity);
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('comment_edit', array('id' => $id)));
+            $log = new UserAction();
+            $log->setUser($this->getUser());
+            $log->setAction("Pakeitė komentarą {$entity->getId()} nuotraukai {$entity->getImage()->getId()}.");
+            $this->getDoctrine()->getEntityManager()->persist($log);
+
+            $this->getDoctrine()->getEntityManager()->flush();
         }
 
-        return $this->render('VisciukaiGalerijaBundle:Comment:edit.html.twig', array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
+        return $this->redirect($this->generateUrl('images_show', array('id' => $entity->getImage()->getId())));
     }
     /**
      * Deletes a Comment entity.
@@ -209,22 +238,30 @@ class CommentController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('VisciukaiGalerijaBundle:Comment')->find($id);
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('VisciukaiGalerijaBundle:Comment')->find($id);
-
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Comment entity.');
-            }
-
-            $em->remove($entity);
-            $em->flush();
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Image entity.');
         }
 
-        return $this->redirect($this->generateUrl('comment'));
+        $securityContext = $this->container->get('security.context');
+        if ($this->getUser() !== $entity->getUser() && !$securityContext->isGranted('ROLE_SUPER_ADMIN')) {
+            $this->addFlash('error', 'Tiktai super administratorius arba kurėjas gali atlikti šią operaciją.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        $log = new UserAction();
+        $log->setUser($this->getUser());
+        $log->setAction("Ištrynė komentarą {$entity->getId()} nuotraukoje {$entity->getImage()->getId()}.");
+        $this->getDoctrine()->getEntityManager()->persist($log);
+
+        $this->getDoctrine()->getEntityManager()->flush();
+
+        $em->remove($entity);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('images_show', array('id' => $entity->getImage()->getId())));
     }
 
     /**

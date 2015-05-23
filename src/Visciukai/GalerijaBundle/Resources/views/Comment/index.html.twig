@@ -1,10 +1,28 @@
-        {% for entity in entities %}
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <strong>{{ entity.user.username }}</strong> <span class="text-muted">commented on {{ entity.createdOn|date('Y-m-d H:i:s') }}</span>
+{% for entity in entities %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>{{ entity.user.username }}</strong> <span
+                    class="text-muted">commented on {{ entity.createdOn|date('Y-m-d H:i:s') }}</span>
+            {% if app.user %}
+                <div class="pull-right">
+                    <a href="{{ path('comment_report', { 'id': entity.id }) }}"><span
+                                class="glyphicon glyphicon-asterisk"></span></a>
+                    {% if entity.user == app.security.getToken().getUser() or is_granted('ROLE_SUPER_ADMIN') %}
+
+                        <a href="{{ path('comment_edit', { 'id': entity.id }) }}"><span
+                                    class="glyphicon glyphicon-pencil"></span></a>
+                        <a href="{{ path('comment_delete', { 'id': entity.id }) }}"><span
+                                    class="glyphicon glyphicon-remove"></span></a>
+
+                    {% endif %}
                 </div>
-                <div class="panel-body">
-                    {{ entity.comment }}
-                </div><!-- /panel-body -->
-            </div><!-- /panel panel-default -->
-        {% endfor %}
+                <div class="clearfix"></div>
+            {% endif %}
+
+        </div>
+        <div class="panel-body">
+            {{ entity.comment }}
+        </div>
+        <!-- /panel-body -->
+    </div><!-- /panel panel-default -->
+{% endfor %}

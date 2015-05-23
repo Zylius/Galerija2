@@ -1,16 +1,26 @@
-{% extends '::base.html.twig' %}
-
+{% extends 'VisciukaiImagesBundle:Image:layout.html.twig' %}
+{% block navbar_entries %}
+    <li><a href="{{ path('images_show', {'id' : entity.image.id}) }}">Nuotrauka {{ entity.image.name }}</a></li>
+    <li class="active"><a href="/">Komentaro redagavimas</a></li>
+{% endblock %}
 {% block body -%}
-    <h1>Comment edit</h1>
 
-    {{ form(edit_form) }}
+    <div class="container-page col-md-12">
+        <br/>
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('comment') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+        <div class="container">
+            <div class="col-md-4">
+                {{ form_start(form, { 'attr': {'class': 'form-inline'} }) }}
+                <div class="form-group">
+                    <div class="input-group">
+                        {{ form_widget(form.comment, {'attr': {'class': 'form-control', 'placeholder': 'Komentaras'}}) }}
+                    </div>
+                </div>
+                {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
+                {{ form_end(form) }}
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+
 {% endblock %}

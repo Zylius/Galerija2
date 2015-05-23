@@ -27,4 +27,9 @@ comment_update:
 comment_delete:
     path:     /{id}/delete
     defaults: { _controller: "VisciukaiGalerijaBundle:Comment:delete" }
-    methods:  [POST, DELETE]
+    methods:  [POST, DELETE, GET]
+
+comment_report:
+    path:     /{id}/report
+    defaults: { _controller: "VisciukaiGalerijaBundle:Comment:report" }
+    methods:  GET
