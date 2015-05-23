@@ -28,6 +28,17 @@ class User extends BaseUser
     /**
      * @var Image[]|ArrayCollection
      *
+     * @ORM\ManyToMany(targetEntity="\Visciukai\ImagesBundle\Entity\Image")
+     * @ORM\JoinTable(name="users_favourites",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="image_id", referencedColumnName="id")}
+     *      )
+     **/
+    private $favouriteImages;
+
+    /**
+     * @var Image[]|ArrayCollection
+     *
      * @ORM\OneToMany(targetEntity="\Visciukai\ImagesBundle\Entity\Image", mappedBy="user")
      * @ORM\OrderBy({"id" = "ASC"})
      */
@@ -85,6 +96,7 @@ class User extends BaseUser
         $this->uploadErrors = new ArrayCollection();
         $this->actions = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->favouriteImages = new ArrayCollection();
     }
 
     /**
@@ -128,6 +140,39 @@ class User extends BaseUser
     public function getImages()
     {
         return $this->images;
+    }
+
+    /**
+     * Add favourite images
+     *
+     * @param Image $images
+     * @return User
+     */
+    public function addFavouriteImage(Image $images)
+    {
+        $this->favouriteImages[] = $images;
+
+        return $this;
+    }
+
+    /**
+     * Remove favourite images
+     *
+     * @param Image $images
+     */
+    public function removeFavouriteImage(Image $images)
+    {
+        $this->favouriteImages->removeElement($images);
+    }
+
+    /**
+     * Get favourite images
+     *
+     * @return Collection
+     */
+    public function getFavouriteImages()
+    {
+        return $this->favouriteImages;
     }
 
     /**

@@ -1,0 +1,18 @@
+{% extends 'VisciukaiImagesBundle:Image:layout.html.twig' %}
+
+{% block body %}
+    <div class="container-page col-md-12">
+        {% for favourite in favourites %}
+            <div class="record pull-left">
+                <div class="image-with-controls list-item">
+                    <div class="controls">
+                        <a class="control-photo" href="{{ path('remove_favourite', {'imageId': favourite.id}) }}"><span class="glyphicon glyphicon-star-empty"></span></a>
+                    </div>
+                    <a href="{{ path('images_show', { 'id': favourite.id }) }}">
+                        <img alt="{{ favourite.name }}" src="{{ asset(favourite.webPath) }}"/>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

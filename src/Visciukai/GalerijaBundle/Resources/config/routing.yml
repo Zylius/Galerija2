@@ -5,3 +5,15 @@ visciukai_galerija_comment:
 visciukai_galerija_homepage:
     path:     /
     defaults: { _controller: VisciukaiGalerijaBundle:Default:index }
+
+show_favourites:
+    path:     /favourites/show
+    defaults: { _controller: VisciukaiGalerijaBundle:Favourites:show }
+
+add_favourite:
+    path:     /favourites/add/{imageId}
+    defaults: { _controller: VisciukaiGalerijaBundle:Favourites:add }
+
+remove_favourite:
+    path:     /favourites/remove/{imageId}
+    defaults: { _controller: VisciukaiGalerijaBundle:Favourites:remove }

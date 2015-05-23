@@ -21,6 +21,9 @@
             <div class="record pull-left">
                 <div class="image-with-controls list-item">
                     <div class="controls" >
+                        {% if app.user %}
+                            <a class="control-photo" href="{{ path('add_favourite', {'imageId': entity.id}) }}"><span class="glyphicon glyphicon-star"></span></a>
+                        {% endif %}
                         {% if entity.album.user == app.security.getToken().getUser() or is_granted('ROLE_SUPER_ADMIN') %}
                             <a class="pin-photo" href="{{ path('images_make_cover_photo', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-pushpin" ></span></a>
                         {% endif %}

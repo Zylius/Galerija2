@@ -25,6 +25,9 @@
                         {% endblock %}
                     </ul>
                     <ul class="nav navbar-nav pull-right">
+                        {% if app.user %}
+                            <li><a href="{{ path('show_favourites') }}">Mano Mėgstamos</a></li>
+                        {% endif %}
                         {% block navbar_entries_right %}
                         {% endblock %}
                     </ul>
