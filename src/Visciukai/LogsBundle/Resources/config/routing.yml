@@ -1,3 +1,11 @@
-visciukai_logs_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: VisciukaiLogsBundle:Default:index }
+visciukai_logs_useraction:
+    resource: "@VisciukaiLogsBundle/Resources/config/routing/useraction.yml"
+    prefix:   /
+
+visciukai_logs_uploaderror:
+    resource: "@VisciukaiLogsBundle/Resources/config/routing/uploaderror.yml"
+    prefix:   /uploaderror
+
+visciukai_logs_searchentry:
+    resource: "@VisciukaiLogsBundle/Resources/config/routing/searchentry.yml"
+    prefix:   /searchentry

@@ -34,6 +34,7 @@ class Album
     /**
      * @var Image
      *
+     * @ORM\JoinColumn(nullable=true)
      * @ORM\OneToOne(targetEntity="Visciukai\ImagesBundle\Entity\Image")
      */
     private $coverPhoto;
@@ -77,7 +78,7 @@ class Album
      * @param Image $coverPhoto
      * @return Album
      */
-    public function setCoverPhoto(Image $coverPhoto)
+    public function setCoverPhoto(Image $coverPhoto = null)
     {
         $this->coverPhoto = $coverPhoto;
 

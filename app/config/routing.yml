@@ -3,7 +3,7 @@ fos_user:
 
 visciukai_logs:
     resource: "@VisciukaiLogsBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /admin
 
 visciukai_image:
     resource: "@VisciukaiImagesBundle/Resources/config/routing/image.yml"
@@ -12,4 +12,5 @@ visciukai_image:
 visciukai_galerija:
     resource: "@VisciukaiGalerijaBundle/Resources/config/routing.yml"
     prefix:   /
+
 

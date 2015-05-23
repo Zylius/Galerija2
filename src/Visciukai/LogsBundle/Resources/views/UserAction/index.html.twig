@@ -1,0 +1,31 @@
+{% extends 'VisciukaiLogsBundle:Default:layout.html.twig' %}
+
+{% block content -%}
+<h1 class="page-header">Paieškos įrašai</h1>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Veiksmas</th>
+                <th>Vartotojas</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.id }}</td>
+                <td>{{ entity.action }}</td>
+                <td>
+                    {% if entity.user is null %}
+                    <i>Anonimas</i>
+                    {% else %}
+                    {{ entity.user.username }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+    {% endblock %}

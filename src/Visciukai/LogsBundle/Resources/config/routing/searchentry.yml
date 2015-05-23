@@ -1,0 +1,10 @@
+searchentry:
+    path:     /
+    defaults: { _controller: "VisciukaiLogsBundle:SearchEntry:index" }
+
+searchentry_show:
+    path:     /{id}/show
+    defaults: { _controller: "VisciukaiLogsBundle:SearchEntry:show" }
+
+
+

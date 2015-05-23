@@ -1,0 +1,10 @@
+useraction:
+    path:     /
+    defaults: { _controller: "VisciukaiLogsBundle:UserAction:index" }
+
+useraction_show:
+    path:     /{id}/show
+    defaults: { _controller: "VisciukaiLogsBundle:UserAction:show" }
+
+
+

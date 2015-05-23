@@ -25,7 +25,7 @@ class UserAction
     /**
      * @var string
      *
-     * @ORM\Column(name="action", type="string", length=45)
+     * @ORM\Column(name="action", type="string", length=256)
      */
     private $action;
 

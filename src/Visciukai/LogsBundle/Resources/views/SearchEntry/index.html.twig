@@ -1,0 +1,33 @@
+{% extends 'VisciukaiLogsBundle:Default:layout.html.twig' %}
+{% block navbar_entries %}
+    <li class="active"><a href="{{ path('searchentry') }}">Paieškos įrašai</a></li>
+{% endblock %}
+{% block content -%}
+    <h1 class="page-header">Paieškos įrašai</h1>
+    <div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Paieškos tekstas</th>
+                <th>Vartotojas</th>
+            </tr>
+        </thead>
+        <tbody class="table table-striped">
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.id }}</td>
+                <td>{{ entity.input }}</td>
+                <td>
+                    {% if entity.user is null %}
+                        <i>Anonimas</i>
+                    {% else %}
+                        {{ entity.user.username }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+    {% endblock %}
