@@ -1,17 +1,29 @@
+
+images_handle_tags:
+    path:     /tags/{id}
+    defaults: { _controller: "VisciukaiImagesBundle:Image:handleTags" }
+    methods:  [POST, GET]
+
+images_tag_action:
+    path:     /tag/{albumId}
+    defaults: { _controller: "VisciukaiImagesBundle:Image:tag", albumId: null }
+    methods:  [GET]
+
+images_make_cover_photo:
+    path:     /cover/{id}
+    defaults: { _controller: "VisciukaiImagesBundle:Image:makeCoverPhoto" }
+    methods:  [POST, GET]
+
 images:
-    path:     /
+    path:     /{albumId}
     defaults: { _controller: "VisciukaiImagesBundle:Image:index" }
 
 images_show:
     path:     /{id}/show
     defaults: { _controller: "VisciukaiImagesBundle:Image:show" }
 
-images_new:
-    path:     /new
-    defaults: { _controller: "VisciukaiImagesBundle:Image:new" }
-
 images_create:
-    path:     /create
+    path:     /{albumId}/create
     defaults: { _controller: "VisciukaiImagesBundle:Image:create" }
     methods:  POST
 
@@ -27,4 +39,4 @@ images_update:
 images_delete:
     path:     /{id}/delete
     defaults: { _controller: "VisciukaiImagesBundle:Image:delete" }
-    methods:  [POST, DELETE]
+    methods:  [POST, DELETE, GET]

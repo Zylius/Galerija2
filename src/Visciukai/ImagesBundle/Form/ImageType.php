@@ -9,15 +9,30 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class ImageType extends AbstractType
 {
     /**
+     * @var bool
+     */
+    private $createForm;
+
+    public function __construct($createForm = true)
+    {
+        $this->createForm = $createForm;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('fileName')
-            ->add('album')
-        ;
+            ->add('name', null, ['label' => 'Pavadinimas'])
+            ->add('description', null, ['label' => 'Aprašymas']);
+
+        if ($this->createForm) {
+            $builder->add('file', null, ['label' => 'Failas']);
+        } else {
+            $builder->add('album', null, ['label' => 'Albumas']);
+        }
     }
     
     /**

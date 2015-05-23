@@ -56,6 +56,15 @@ class User extends BaseUser
      */
     private $actions;
 
+
+    /**
+     * @var Album[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Album", mappedBy="user")
+     * @ORM\OrderBy({"id" = "ASC"})
+     */
+    private $albums;
+
     /**
      * Constructor
      */
@@ -208,5 +217,38 @@ class User extends BaseUser
     public function getActions()
     {
         return $this->actions;
+    }
+
+    /**
+     * Add albums
+     *
+     * @param \Visciukai\GalerijaBundle\Entity\Album $albums
+     * @return User
+     */
+    public function addAlbum(\Visciukai\GalerijaBundle\Entity\Album $albums)
+    {
+        $this->albums[] = $albums;
+
+        return $this;
+    }
+
+    /**
+     * Remove albums
+     *
+     * @param \Visciukai\GalerijaBundle\Entity\Album $albums
+     */
+    public function removeAlbum(\Visciukai\GalerijaBundle\Entity\Album $albums)
+    {
+        $this->albums->removeElement($albums);
+    }
+
+    /**
+     * Get albums
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAlbums()
+    {
+        return $this->albums;
     }
 }

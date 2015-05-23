@@ -1,16 +1,46 @@
-{% extends '::base.html.twig' %}
-
+{% extends 'VisciukaiImagesBundle:Image:layout.html.twig' %}
+{% block navbar_entries %}
+    <li><a href="{{ path('images', {'albumId' : entity.album.id}) }}">Albumas {{ entity.album.title }}</a></li>
+    <li class="active"><a href="/">Nuotraukos {{ entity.name }} redagavimas</a></li>
+{% endblock %}
 {% block body -%}
-    <h1>Image edit</h1>
+    <div class="container-page col-md-12">
+    <br/>
+    <div class="container">
+            <div class="col-md-4"></div>
+            {{ form_start(form) }}
+            <div class="col-md-4 well image-form">
+                <b>Atnaujinti paveiksliuką</b>
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                <div class="form-group col-lg-12">
+                    {{ form_label(form.name) }}
+                    {{ form_widget(form.name, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.name) }}
+                </div>
 
-    {{ form(edit_form) }}
+                <div class="form-group col-lg-12">
+                    {{ form_label(form.description) }}
+                    {{ form_widget(form.description, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.description) }}
+                </div>
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('images') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+                <div class="form-group col-lg-12">
+                    {{ form_label(form.album) }}
+                    {{ form_widget(form.album, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.album) }}
+                </div>
+
+                {{ form_rest(form) }}
+                <div class="col-md-6">
+                    <input type="submit" class="btn btn-primary"  value="Atnaujinti" />
+                </div>
+                {{ form_end(form) }}
+            </div>
+            <div class="col-md-4"></div>
+
+
+        </div>
+    </div>
+
 {% endblock %}

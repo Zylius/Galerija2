@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table()
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Visciukai\ImagesBundle\Entity\TagRepository")
  */
 class Tag
 {
@@ -89,5 +90,10 @@ class Tag
     public function getImage()
     {
         return $this->image;
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 }

@@ -5,7 +5,10 @@ namespace Visciukai\ImagesBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
+use Visciukai\GalerijaBundle\Entity\Album;
 use Visciukai\ImagesBundle\Entity\Image;
+use Visciukai\ImagesBundle\Form\ImageTagType;
 use Visciukai\ImagesBundle\Form\ImageType;
 
 /**
@@ -16,27 +19,87 @@ class ImageController extends Controller
 {
 
     /**
-     * Lists all Image entities.
+     * Lists images by tag.
      *
+     * @param string $search
+     * @param null $albumId
      */
-    public function indexAction()
+    public function tagAction(Request $request, $albumId = null)
     {
+        $search = $request->get('tag');
+        $album = null;
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('VisciukaiImagesBundle:Image')->findAll();
+        if($albumId !== null) {
+            $album = $this->getDoctrine()->getRepository('VisciukaiGalerijaBundle:Album')->find($albumId);
+        }
+
+        $images = $em->getRepository('VisciukaiImagesBundle:Image')->findByTags($search, $album);
+
+       if ($album === null) {
+            $album = new Album();
+            $album->setTitle('pagal tagus "' . $search . '".');
+        }
+        $album->setImages($images);
+        return $this->render('VisciukaiImagesBundle:Image:index.html.twig', array(
+            'album' => $album,
+        ));
+    }
+
+    /**
+     * Sets this image as the cover photo.
+     *
+     * @param $id
+     */
+    public function makeCoverPhotoAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        /** @var Image $entity */
+        $entity = $em->getRepository('VisciukaiImagesBundle:Image')->find($id);
+        $securityContext = $this->container->get('security.context');
+        if ($this->getUser() !== $entity->getAlbum()->getUser() && !$securityContext->isGranted('ROLE_SUPER_ADMIN')) {
+            $this->addFlash('error', 'Tiktai super administratorius arba albumo kurėjas gali atlikti šią operaciją.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        $entity->getAlbum()->setCoverPhoto($entity);
+        $em->flush();
+        return $this->redirect($request->headers->get('referer'));
+    }
+
+    /**
+     * Lists all Image entities.
+     *
+     * @param $albumId
+     *
+     * @return Response
+     */
+    public function indexAction($albumId)
+    {
+        $album = $this->getDoctrine()->getRepository('VisciukaiGalerijaBundle:Album')->find($albumId);
+        $entity = new Image();
+        $entity->setAlbum($album);
+        $form  = $this->createCreateForm($entity);
 
         return $this->render('VisciukaiImagesBundle:Image:index.html.twig', array(
-            'entities' => $entities,
+            'album' => $album,
+            'entity' => $entity,
+            'form' => $form->createView(),
         ));
     }
     /**
      * Creates a new Image entity.
      *
+     * @param Request $request
+     * @param $albumId
+     *
+     * @return Response
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, $albumId)
     {
         $entity = new Image();
         $entity->setUser($this->getUser());
+        $entity->setAlbum($this->getDoctrine()->getRepository('VisciukaiGalerijaBundle:Album')->find($albumId));
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
@@ -45,13 +108,14 @@ class ImageController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('images_show', array('id' => $entity->getId())));
+        } else {
+            $errors = $form->getErrors(true);
+            foreach ($errors as $error) {
+                $this->addFlash('error', $error->getMessage());
+            }
         }
 
-        return $this->render('VisciukaiImagesBundle:Image:new.html.twig', array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        ));
+        return $this->redirect($this->generateUrl('images', array('albumId' => $albumId)));
     }
 
     /**
@@ -63,29 +127,13 @@ class ImageController extends Controller
      */
     private function createCreateForm(Image $entity)
     {
-        $form = $this->createForm(new ImageType(), $entity, array(
-            'action' => $this->generateUrl('images_create'),
+        $form = $this->createForm(new ImageType(true), $entity, array(
+            'action' => $this->generateUrl('images_create', ['albumId' => $entity->getAlbum()->getId()]),
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
 
         return $form;
-    }
-
-    /**
-     * Displays a form to create a new Image entity.
-     *
-     */
-    public function newAction()
-    {
-        $entity = new Image();
-        $form   = $this->createCreateForm($entity);
-
-        return $this->render('VisciukaiImagesBundle:Image:new.html.twig', array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        ));
     }
 
     /**
@@ -97,16 +145,12 @@ class ImageController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('VisciukaiImagesBundle:Image')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Image entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('VisciukaiImagesBundle:Image:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -114,7 +158,7 @@ class ImageController extends Controller
      * Displays a form to edit an existing Image entity.
      *
      */
-    public function editAction($id)
+    public function editAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -124,12 +168,18 @@ class ImageController extends Controller
             throw $this->createNotFoundException('Unable to find Image entity.');
         }
 
+        $securityContext = $this->container->get('security.context');
+        if ($this->getUser() !== $entity->getUser() && !$securityContext->isGranted('ROLE_SUPER_ADMIN')) {
+            $this->addFlash('error', 'Tiktai super administratorius arba kurėjas gali atlikti šią operaciją.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('VisciukaiImagesBundle:Image:edit.html.twig', array(
             'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
     }
@@ -143,12 +193,10 @@ class ImageController extends Controller
     */
     private function createEditForm(Image $entity)
     {
-        $form = $this->createForm(new ImageType(), $entity, array(
+        $form = $this->createForm(new ImageType(false), $entity, array(
             'action' => $this->generateUrl('images_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
-
-        $form->add('submit', 'submit', array('label' => 'Update'));
 
         return $form;
     }
@@ -188,22 +236,27 @@ class ImageController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('VisciukaiImagesBundle:Image')->find($id);
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('VisciukaiImagesBundle:Image')->find($id);
-
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Image entity.');
-            }
-
-            $em->remove($entity);
-            $em->flush();
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Image entity.');
         }
 
-        return $this->redirect($this->generateUrl('images'));
+        $securityContext = $this->container->get('security.context');
+        if ($this->getUser() !== $entity->getUser() && !$securityContext->isGranted('ROLE_SUPER_ADMIN')) {
+            $this->addFlash('error', 'Tiktai super administratorius arba kurėjas gali atlikti šią operaciją.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        foreach ($entity->getTags() as $tag) {
+            $em->remove($tag);
+        }
+
+        $em->remove($entity);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('images', array('albumId' => $entity->getAlbum()->getId())));
     }
 
     /**
@@ -221,5 +274,21 @@ class ImageController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+
+    /**
+     * Handles tags.
+     *
+     * @param $request
+     * @param $id
+     *
+     * @return Response
+     */
+    public function handleTagsAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $entity = $em->getRepository('VisciukaiImagesBundle:Image')->find($id);
+        $em->getRepository('VisciukaiImagesBundle:Tag')->handleTags($request->query->get('tags'), $entity);
+        return $this->redirect($request->headers->get('referer'));
     }
 }

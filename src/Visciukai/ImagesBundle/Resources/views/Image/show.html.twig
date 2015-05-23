@@ -1,32 +1,49 @@
-{% extends '::base.html.twig' %}
-
+{% extends 'VisciukaiImagesBundle:Image:layout.html.twig' %}
+{% block navbar_entries %}
+    <li><a href="{{ path('images', {'albumId' : entity.album.id}) }}">Albumas {{ entity.album.title }}</a></li>
+    <li class="active"><a href="/">Nuotraukos {{ entity.name }} peržiūra</a></li>
+{% endblock %}
 {% block body -%}
-    <h1>Image</h1>
-
-    <table class="record_properties">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Filename</th>
-                <td>{{ entity.fileName }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('images') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('images_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+    <br/>
+<div class="container-page col-md-12">
+    <div class="col-md-9">
+        <div class="image-with-controls pull-left">
+            <div class="controls" >
+                {% if entity.album.user == app.security.getToken().getUser() or is_granted('ROLE_SUPER_ADMIN') %}
+                    <a class="pin-photo" href="{{ path('images_make_cover_photo', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-pushpin" ></span></a>
+                {% endif %}
+                {% if entity.user == app.security.getToken().getUser() or is_granted('ROLE_SUPER_ADMIN') %}
+                    <a class="control-photo" href="{{ path('images_delete', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-remove" ></span></a>
+                    <a class="control-photo" href="{{ path('images_edit', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                {% endif %}
+            </div>
+            <img class="full-img" alt="{{ entity.name }}" src="{{ asset(entity.webPath) }}"/>
+        </div>
+    </div>
+    <div class="col-md-3 well">
+        <form action="{{ path('images_handle_tags', {'id' : entity.id}) }}">
+            <div class="row form-group">
+                <label for="tags">Tagai</label>
+            </div>
+            <div class="form-group col-md-12 row">
+                <select id="tags" name="tags[]" data-role="tagsinput" multiple>
+                    {% for tag in entity.tags %}
+                        <option selected value="{{ tag.name }}">{{ tag.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="row">
+                <input type="submit" class="btn btn-primary pull-right"  value="Pakeisti tagus" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-3 well">
+        <div class="row">
+            <b>Aprašymas:</b>
+        </div>
+        <div class="row">
+            {% if entity.description|length > 0 %}{{ entity.description }}{% else %} Nėra aprašymo {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,41 +1,86 @@
-{% extends '::base.html.twig' %}
-
+{% extends 'VisciukaiImagesBundle:Image:layout.html.twig' %}
+{% block navbar_entries %}
+    <li class="active"><a href="{{ path('images', {'albumId': album.id}) }}">Albumas {{ album.title }}</a></li>
+{% endblock %}
+{% block navbar_entries_right %}
+<li class="search">
+        <form action="{% if album.id > 0 %}{{ path('images_tag_action', {'albumId' : album.id}) }} {% else %} / {% endif %}">
+            <div class="input-group">
+                <input type="text"  name="tag" class="form-control" placeholder="Ieškoti tago...">
+                  <span class="input-group-btn">
+                    <input type="submit"  class="btn btn-default" value="Ieškoti">
+                  </span>
+            </div>
+        </form>
+    </li>
+{% endblock %}
 {% block body -%}
-    <h1>Image list</h1>
-
-    <table class="records_list">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Filename</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('images_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.fileName }}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('images_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('images_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
+    <div class="container-page col-md-12">
+        <div class="clearfix">
+        {% for entity in album.images %}
+            <div class="record pull-left">
+                <div class="image-with-controls list-item">
+                    <div class="controls" >
+                        {% if entity.album.user == app.security.getToken().getUser() or is_granted('ROLE_SUPER_ADMIN') %}
+                            <a class="pin-photo" href="{{ path('images_make_cover_photo', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-pushpin" ></span></a>
+                        {% endif %}
+                        {% if entity.user == app.security.getToken().getUser() or is_granted('ROLE_SUPER_ADMIN') %}
+                            <a class="control-photo" href="{{ path('images_delete', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-remove" ></span></a>
+                            <a class="control-photo" href="{{ path('images_edit', { 'id': entity.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                        {% endif %}
+                    </div>
+                    <a href="{{ path('images_show', { 'id': entity.id }) }}">
+                        <img alt="{{ entity.name }}" src="{{ asset(entity.webPath) }}"/>
+                    </a>
+                </div>
+            </div>
         {% endfor %}
-        </tbody>
-    </table>
 
-        <ul>
-        <li>
-            <a href="{{ path('images_new') }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
+        </div>
+        <div class="clear"></div>
+{% if form is defined %}
+    <div class="container">
+        <div class="col-md-4"></div>
+        {{ form_start(form) }}
+        <div class="col-md-4 well image-form">
+            <b>Įkelti paveiksliuką</b>
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            <div class="form-group col-lg-12">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            <div class="form-group col-lg-12">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.description) }}
+            </div>
+
+            <div class="form-group col-lg-12">
+                {{ form_label(form.file) }}
+                {{ form_widget(form.file) }}
+                {{ form_errors(form.file) }}
+            </div>
+            {{ form_rest(form) }}
+            <div class="col-md-6">
+                <input type="submit" class="btn btn-primary"  value="Įkelti" />
+            </div>
+            {{ form_end(form) }}
+        </div>
+        <div class="col-md-4"></div>
+
+
+        </div>
+        {% endif %}
+        </div>
+
     {% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets '@VisciukaiImagesBundle/Resources/public/css/*' filter='cssrewrite' %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+

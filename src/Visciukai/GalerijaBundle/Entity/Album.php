@@ -25,6 +25,13 @@ class Album
     private $id;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="title", type="string", length=255)
+     */
+    private $title;
+
+    /**
      * @var Image
      *
      * @ORM\OneToOne(targetEntity="Visciukai\ImagesBundle\Entity\Image")
@@ -38,6 +45,13 @@ class Album
      * @ORM\OrderBy({"id" = "ASC"})
      */
     private $images;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="albums")
+     */
+    private $user;
 
     /**
      * Constructor
@@ -111,5 +125,68 @@ class Album
     public function getImages()
     {
         return $this->images;
+    }
+
+    /**
+     * Set images
+     *
+     * @param array $images
+     */
+    public function setImages($images)
+    {
+        $this->images = $images;
+    }
+
+
+    /**
+     * Set title
+     *
+     * @param string $title
+     * @return Album
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string 
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function __toString()
+    {
+        return $this->title;
+    }
+
+
+    /**
+     * Set user
+     *
+     * @param \Visciukai\GalerijaBundle\Entity\User $user
+     * @return Album
+     */
+    public function setUser(\Visciukai\GalerijaBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \Visciukai\GalerijaBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }
