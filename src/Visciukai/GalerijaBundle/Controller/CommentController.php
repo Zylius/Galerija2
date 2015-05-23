@@ -29,6 +29,7 @@ class CommentController extends Controller
         foreach($users as $user) {
             $message = \Swift_Message::newInstance()
                 ->setSubject('Comment Reported')
+                ->setFrom('trader.kursinis@gmail.com')
                 ->setTo($user->getEmail())
                 ->setBody(
                     $this->renderView(
