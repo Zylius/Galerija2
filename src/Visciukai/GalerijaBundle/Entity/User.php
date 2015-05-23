@@ -10,6 +10,7 @@ use Visciukai\ImagesBundle\Entity\Image;
 use Visciukai\LogsBundle\Entity\SearchEntry;
 use Visciukai\LogsBundle\Entity\UploadError;
 use Visciukai\LogsBundle\Entity\UserAction;
+use Visciukai\GalerijaBundle\Entity\Comment;
 
 /**
  * @ORM\Entity
@@ -65,6 +66,14 @@ class User extends BaseUser
      */
     private $albums;
 
+
+    /**
+     * @var Comment[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Comment", mappedBy="user")
+     */
+    private $comments;
+
     /**
      * Constructor
      */
@@ -75,6 +84,7 @@ class User extends BaseUser
         $this->searches = new ArrayCollection();
         $this->uploadErrors = new ArrayCollection();
         $this->actions = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     /**
@@ -250,5 +260,15 @@ class User extends BaseUser
     public function getAlbums()
     {
         return $this->albums;
+    }
+
+    /**
+     * Get comments
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 }

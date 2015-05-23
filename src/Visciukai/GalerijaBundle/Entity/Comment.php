@@ -4,6 +4,7 @@ namespace Visciukai\GalerijaBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Visciukai\ImagesBundle\Entity\Image;
+use Visciukai\GalerijaBundle\Entity\User;
 
 /**
  * Comment
@@ -30,11 +31,35 @@ class Comment
     private $comment;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_on", type="date", nullable=false)
+     */
+    private $createdOn;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="\Visciukai\GalerijaBundle\Entity\User", inversedBy="comments")
+     */
+
+    private $user;
+
+    /**
      * @var Image
      *
      * @ORM\ManyToOne(targetEntity="\Visciukai\ImagesBundle\Entity\Image", inversedBy="comments")
      */
     private $image;
+
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->createdOn = new \DateTime("now");
+    }
 
     /**
      * Get id
@@ -90,5 +115,28 @@ class Comment
     public function getImage()
     {
         return $this->image;
+    }
+
+    /**
+     * Set user
+     *
+     * @param User $user
+     * @return Comment
+     */
+    public function setUser(User $user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }
