@@ -45,5 +45,16 @@
             {% if entity.description|length > 0 %}{{ entity.description }}{% else %} Nėra aprašymo {% endif %}
         </div>
     </div>
+    <div class="col-md-3 well">
+        <div class="row" style="margin-bottom: 1em;">
+            <b>Komentarai:</b>
+        </div>
+        <div class="row">
+            {{ render(controller('VisciukaiGalerijaBundle:Comment:showImage', { 'imageId': entity.id })) }}
+        </div>
+        <div class="row">
+            {{ render(controller('VisciukaiGalerijaBundle:Comment:new', { 'imageId': entity.id })) }}
+        </div>
+    </div>
 </div>
 {% endblock %}

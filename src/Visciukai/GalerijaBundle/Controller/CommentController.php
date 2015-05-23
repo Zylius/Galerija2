@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Visciukai\GalerijaBundle\Entity\Comment;
 use Visciukai\GalerijaBundle\Form\CommentType;
+use Visciukai\ImagesBundle\Entity\Image;
+use Visciukai\LogsBundle\Entity\UserAction;
 
 /**
  * Comment controller.
@@ -29,28 +31,47 @@ class CommentController extends Controller
             'entities' => $entities,
         ));
     }
+
+    public function showImageAction($imageId)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entities = $em->getRepository('VisciukaiImagesBundle:Image')->find($imageId)->getComments();
+
+        return $this->render('VisciukaiGalerijaBundle:Comment:index.html.twig', array(
+            'entities' => $entities,
+        ));
+    }
     /**
      * Creates a new Comment entity.
      *
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, $imageId)
     {
+        if ($this->getUser() === null) {
+            $this->addFlash('error', 'Tiktai prisijungę vartotojai gali atlikti šią operaciją.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
         $entity = new Comment();
+        $entity->setUser($this->getUser());
+        $entity->setImage($this->getDoctrine()->getRepository('VisciukaiImagesBundle:Image')->find($imageId));
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+
+            $log = new UserAction();
+            $log->setUser($this->getUser());
+            $log->setAction("Pakomentavo nuotrauką, kurios id - {$entity->getImage()->getId()}.");
+            $this->getDoctrine()->getEntityManager()->persist($log);
+
             $em->persist($entity);
             $em->flush();
-
-            return $this->redirect($this->generateUrl('comment_show', array('id' => $entity->getId())));
         }
 
-        return $this->render('VisciukaiGalerijaBundle:Comment:new.html.twig', array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        ));
+        return $this->redirect($this->generateUrl('images_show', array('id' => $imageId)));
     }
 
     /**
@@ -63,7 +84,7 @@ class CommentController extends Controller
     private function createCreateForm(Comment $entity)
     {
         $form = $this->createForm(new CommentType(), $entity, array(
-            'action' => $this->generateUrl('comment_create'),
+            'action' => $this->generateUrl('comment_create', ['imageId' => $entity->getImage()->getId()]),
             'method' => 'POST',
         ));
 
@@ -76,9 +97,10 @@ class CommentController extends Controller
      * Displays a form to create a new Comment entity.
      *
      */
-    public function newAction()
+    public function newAction($imageId)
     {
         $entity = new Comment();
+        $entity->setImage($this->getDoctrine()->getRepository('VisciukaiImagesBundle:Image')->find($imageId));
         $form   = $this->createCreateForm($entity);
 
         return $this->render('VisciukaiGalerijaBundle:Comment:new.html.twig', array(

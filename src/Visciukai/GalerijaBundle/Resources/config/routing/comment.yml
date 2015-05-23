@@ -3,15 +3,15 @@ comment:
     defaults: { _controller: "VisciukaiGalerijaBundle:Comment:index" }
 
 comment_show:
-    path:     /{id}/show
-    defaults: { _controller: "VisciukaiGalerijaBundle:Comment:show" }
+    path:     /{imageId}/show
+    defaults: { _controller: "VisciukaiGalerijaBundle:Comment:showImage" }
 
 comment_new:
-    path:     /new
+    path:     /{imageId}/new
     defaults: { _controller: "VisciukaiGalerijaBundle:Comment:new" }
 
 comment_create:
-    path:     /create
+    path:     /{imageId}/create
     defaults: { _controller: "VisciukaiGalerijaBundle:Comment:create" }
     methods:  POST
 

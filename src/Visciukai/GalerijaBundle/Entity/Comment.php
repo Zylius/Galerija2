@@ -33,7 +33,7 @@ class Comment
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="created_on", type="date", nullable=false)
+     * @ORM\Column(name="created_on", type="datetime", nullable=false)
      */
     private $createdOn;
 
@@ -138,5 +138,10 @@ class Comment
     public function getUser()
     {
         return $this->user;
+    }
+
+    public function getCreatedOn()
+    {
+        return $this->createdOn;
     }
 }
