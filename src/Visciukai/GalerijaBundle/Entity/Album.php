@@ -32,6 +32,13 @@ class Album
     private $title;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_on", type="datetime")
+     */
+    private $createdOn;
+
+    /**
      * @var Image
      *
      * @ORM\JoinColumn(nullable=true)
@@ -153,6 +160,19 @@ class Album
     }
 
     /**
+     * Set createdOn
+     *
+     * @param \DateTime $createdOn
+     * @return Album
+     */
+    public function setCreatedOn($createdOn)
+    {
+        $this->createdOn = $createdOn;
+
+        return $this;
+    }
+
+    /**
      * Get title
      *
      * @return string 
@@ -160,6 +180,16 @@ class Album
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * Get createdOn
+     *
+     * @return \DateTime
+     */
+    public function getCreatedOn()
+    {
+        return $this->createdOn;
     }
 
     public function __toString()

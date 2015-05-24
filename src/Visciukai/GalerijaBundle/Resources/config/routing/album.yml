@@ -1,0 +1,12 @@
+album_add:
+    path:     /add
+    defaults: { _controller: "VisciukaiGalerijaBundle:Album:add" }
+
+album_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "VisciukaiGalerijaBundle:Album:edit" }
+
+album_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "VisciukaiGalerijaBundle:Album:delete" }
+    methods:  [POST, DELETE, GET]

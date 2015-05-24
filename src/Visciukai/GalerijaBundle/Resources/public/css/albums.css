@@ -1,0 +1,32 @@
+.album-image{
+    max-height: 100%;
+    max-width: 100%;
+}
+.image-holder{
+    height: 200px;
+    text-align: center;
+}
+.fr{
+    float: right;
+}
+.controls{
+    padding: 10px;
+}
+
+.list-item{
+    border: 2px solid black;
+    margin: 5px;
+}
+
+.date{
+    line-height: 36px;
+}
+
+.main{
+    padding-top:25px;
+}
+
+.add-button{
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
