@@ -23,43 +23,45 @@
             <img class="full-img" alt="{{ entity.name }}" src="{{ asset(entity.webPath) }}"/>
         </div>
     </div>
-    <div class="col-md-3 well">
-        <form action="{{ path('images_handle_tags', {'id' : entity.id}) }}">
-            <div class="row form-group">
-                <label for="tags">Tagai</label>
-            </div>
-            <div class="form-group col-md-12 row">
-                <select id="tags" name="tags[]" data-role="tagsinput" multiple>
-                    {% for tag in entity.tags %}
-                        <option selected value="{{ tag.name }}">{{ tag.name }}</option>
-                    {% endfor %}
-                </select>
+    <div class="col-md-3">
+        <div class="well">
+            <form action="{{ path('images_handle_tags', {'id' : entity.id}) }}">
+                <div class="row form-group">
+                    <label for="tags">Tagai</label>
+                </div>
+                <div class="form-group col-md-12 row">
+                    <select id="tags" name="tags[]" data-role="tagsinput" multiple>
+                        {% for tag in entity.tags %}
+                            <option selected value="{{ tag.name }}">{{ tag.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="row">
+                    <input type="submit" class="btn btn-primary pull-right"  value="Pakeisti tagus" />
+                </div>
+            </form>
+        </div>
+        <div class="well">
+            <div class="row">
+                <b>Aprašymas:</b>
             </div>
             <div class="row">
-                <input type="submit" class="btn btn-primary pull-right"  value="Pakeisti tagus" />
+                {% if entity.description|length > 0 %}{{ entity.description }}{% else %} Nėra aprašymo {% endif %}
             </div>
-        </form>
-    </div>
-    <div class="col-md-3 well">
-        <div class="row">
-            <b>Aprašymas:</b>
         </div>
-        <div class="row">
-            {% if entity.description|length > 0 %}{{ entity.description }}{% else %} Nėra aprašymo {% endif %}
+        <div class="well">
+            <div class="row" style="margin-bottom: 1em;">
+                <b>Komentarai:</b>
+            </div>
+            <div class="row">
+                {{ render(controller('VisciukaiGalerijaBundle:Comment:showImage', { 'imageId': entity.id })) }}
+            </div>
+            {% if app.user %}
+                <div class="row pull-right">
+                    {{ render(controller('VisciukaiGalerijaBundle:Comment:new', { 'imageId': entity.id })) }}
+                </div><div class="clearfix"></div>
+            {% endif %}
         </div>
-    </div>
-    <div class="col-md-3 well">
-        <div class="row" style="margin-bottom: 1em;">
-            <b>Komentarai:</b>
-        </div>
-        <div class="row">
-            {{ render(controller('VisciukaiGalerijaBundle:Comment:showImage', { 'imageId': entity.id })) }}
-        </div>
-        {% if app.user %}
-        <div class="row pull-right">
-            {{ render(controller('VisciukaiGalerijaBundle:Comment:new', { 'imageId': entity.id })) }}
-        </div><div class="clearfix"></div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}
