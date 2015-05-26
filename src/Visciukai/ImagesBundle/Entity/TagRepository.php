@@ -12,12 +12,13 @@ class TagRepository extends \Doctrine\ORM\EntityRepository
 {
     public function handleTags($tagNames, Image $image) {
         $rep = $this->getEntityManager()->getRepository($this->getEntityName());
-        $rep->createQueryBuilder('t')
-            ->delete()
-            ->where('t.image = :image')
-            ->andWhere('t.name NOT IN (:tagNames)')
-            ->setParameters(['tagNames' => $tagNames, 'image' => $image])
-            ->getQuery()->execute();
+        $qb = $rep->createQueryBuilder('t')->delete()->where('t.image = :image')->setParameter('image', $image);
+
+        if (!empty($tagNames)) {
+            $qb->andWhere('t.name NOT IN (:tagNames)')->setParameter('tagNames', $tagNames);
+        }
+
+        $qb->getQuery()->execute();
 
         foreach ($image->getTags() as $currentTag) {
             if (in_array($currentTag->getName(), $tagNames)) {
