@@ -19,6 +19,11 @@
                     {{ form_widget(form.title, { 'attr': {'class': 'form-control'} }) }}
                     {{ form_errors(form.title) }}
                 </div>
+                <div class="form-group col-lg-12">
+                    {{ form_label(form.user) }}
+                    {{ form_widget(form.user, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.user) }}
+                </div>
                 {{ form_rest(form) }}
                 <div class="col-md-6">
                     <input type="submit" class="btn btn-primary"  value="Pakeisti" />

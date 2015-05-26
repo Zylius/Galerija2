@@ -8,24 +8,26 @@
         <div id="albums"  class="container-page col-md-12">
         {% for album in albums %}
             <div class="list-item col-md-3">
-                <a href="/images/{{ album.id }}">
-                    <div>
-                        <div class="title text-center">{{ album.title }}</div>
-                        <div class="image-holder">
-                        {% if album.coverPhoto %}
-                            <img class="album-image" src="{{ album.coverPhoto.getWebPath() }}"/>
-                        {% else %}
-                            <div>No cover photo</div>
-                        {% endif %}
+                <div class="item-inner">
+                    <a href="/images/{{ album.id }}">
+                        <div>
+                            <div class="title text-center">{{ album.title }}</div>
+                            <div class="image-holder">
+                            {% if album.coverPhoto %}
+                                <img class="album-image" src="{{ album.coverPhoto.getWebPath() }}"/>
+                            {% else %}
+                                <div>No cover photo</div>
+                            {% endif %}
+                            </div>
                         </div>
+                    </a>
+                    <div class="controls clearfix">
+                        {% if album.user == app.security.getToken().getUser() or is_granted('ROLE_SUPER_ADMIN') %}
+                            <a class="btn btn-default" href="/album/{{ album.id }}/edit">Edit</a>
+                            <a class="btn btn-danger" href="/album/{{ album.id }}/delete">Delete</a>
+                        {% endif %}
+                        <span class="date fr">{{ album.createdOn|date('Y-m-d H:i:s') }}</span>
                     </div>
-                </a>
-                <div class="controls clearfix">
-                    {% if album.user == app.security.getToken().getUser() or is_granted('ROLE_SUPER_ADMIN') %}
-                        <a class="btn btn-default" href="/album/{{ album.id }}/edit">Edit</a>
-                        <a class="btn btn-danger" href="/album/{{ album.id }}/delete">Delete</a>
-                    {% endif %}
-                    <span class="date fr">{{ album.createdOn|date('Y-m-d H:i:s') }}</span>
                 </div>
             </div>
         {% endfor %}

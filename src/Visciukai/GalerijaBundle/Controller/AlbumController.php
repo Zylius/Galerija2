@@ -21,6 +21,11 @@ class AlbumController extends Controller
      */
     public function AddAction(Request $request)
     {
+        if ($this->getUser() === null) {
+            $this->addFlash('error', 'Tiktai prisijungę vartotojai gali atlikti šią operaciją.');
+            return $this->redirect($this->generateUrl('visciukai_galerija_homepage'));
+        }
+
         $em = $this->getDoctrine()->getManager();
 
         $form = $this->createForm(new AlbumType(), null);
@@ -48,9 +53,21 @@ class AlbumController extends Controller
      */
     public function EditAction(Request $request, $id)
     {
+        if ($this->getUser() === null) {
+            $this->addFlash('error', 'Tiktai prisijungę vartotojai gali atlikti šią operaciją.');
+            return $this->redirect($this->generateUrl('visciukai_galerija_homepage'));
+        }
+
         $em = $this->getDoctrine()->getManager();
         $album = $this->getDoctrine()->getRepository('VisciukaiGalerijaBundle:Album')->find($id);
-        $form = $this->createForm(new AlbumType(false), $album);
+
+        $securityContext = $this->container->get('security.context');
+        if ($this->getUser() != $album->getUser() && !$securityContext->isGranted('ROLE_SUPER_ADMIN')) {
+            $this->addFlash('error', 'Jus neturite teisės redaguoti šitą albumą.');
+            return $this->redirect($this->generateUrl('visciukai_galerija_homepage'));
+        }
+
+        $form = $this->createForm(new AlbumType(true), $album);
         $form->handleRequest($request);
         if ($form->isValid()) {
             $em->flush();
@@ -72,8 +89,20 @@ class AlbumController extends Controller
      */
     public function DeleteAction($id)
     {
+        if ($this->getUser() === null) {
+            $this->addFlash('error', 'Tiktai prisijungę vartotojai gali atlikti šią operaciją.');
+            return $this->redirect($this->generateUrl('visciukai_galerija_homepage'));
+        }
+
         $em = $this->getDoctrine()->getManager();
         $album = $this->getDoctrine()->getRepository('VisciukaiGalerijaBundle:Album')->find($id);
+
+        $securityContext = $this->container->get('security.context');
+        if ($this->getUser() != $album->getUser() && !$securityContext->isGranted('ROLE_SUPER_ADMIN')) {
+            $this->addFlash('error', 'Jus neturite teisės ištrynti šitą albumą.');
+            return $this->redirect($this->generateUrl('visciukai_galerija_homepage'));
+        }
+
         $images = $album->getImages();
 
         foreach($images as $image){
