@@ -52,6 +52,7 @@ class ImageController extends Controller
 
         return $this->render('VisciukaiImagesBundle:Image:index.html.twig', array(
             'album' => $album,
+            'tagString' => $search,
         ));
     }
 
