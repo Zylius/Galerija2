@@ -52,6 +52,7 @@ class ImageController extends Controller
 
         return $this->render('VisciukaiImagesBundle:Image:index.html.twig', array(
             'album' => $album,
+            'tagString' => $search,
         ));
     }
 
@@ -335,13 +336,14 @@ class ImageController extends Controller
      */
     public function handleTagsAction(Request $request, $id)
     {
+        $tags = $request->query->get('tags') === null ? [] : $request->query->get('tags');
         $em = $this->getDoctrine()->getEntityManager();
         $entity = $em->getRepository('VisciukaiImagesBundle:Image')->find($id);
-        $em->getRepository('VisciukaiImagesBundle:Tag')->handleTags($request->query->get('tags'), $entity);
+        $em->getRepository('VisciukaiImagesBundle:Tag')->handleTags($tags, $entity);
 
         $log = new UserAction();
         $log->setUser($this->getUser());
-        $tagsString = join(', ', $request->query->get('tags'));
+        $tagsString = join(', ', $tags);
         $log->setAction("Pakeitė nuotraukos {$entity->getId()} tagus į [{$tagsString}] albume {$entity->getAlbum()->getId()}.");
         $this->getDoctrine()->getEntityManager()->persist($log);
 

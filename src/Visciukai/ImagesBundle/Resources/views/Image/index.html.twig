@@ -6,7 +6,7 @@
 <li class="search">
         <form action="{% if album.id > 0 %}{{ path('images_tag_action', {'albumId' : album.id}) }} {% else %} / {% endif %}">
             <div class="input-group">
-                <input type="text"  name="tag" class="form-control" placeholder="Ieškoti tago...">
+                <input type="text"  name="tag" class="form-control" {% if tagString is defined %}value="{{ tagString }}"{% endif %} placeholder="Ieškoti tago...">
                   <span class="input-group-btn">
                     <input type="submit"  class="btn btn-default" value="Ieškoti">
                   </span>
