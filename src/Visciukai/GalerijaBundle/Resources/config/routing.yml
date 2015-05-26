@@ -2,6 +2,10 @@ visciukai_galerija_comment:
     resource: "@VisciukaiGalerijaBundle/Resources/config/routing/comment.yml"
     prefix:   /comment
 
+visciukai_galerija_album:
+    resource: "@VisciukaiGalerijaBundle/Resources/config/routing/album.yml"
+    prefix:   /album
+
 visciukai_galerija_homepage:
     path:     /
     defaults: { _controller: VisciukaiGalerijaBundle:Default:index }

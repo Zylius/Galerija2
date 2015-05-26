@@ -1,4 +1,40 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-<div class="text-center">GALERIJA V2!</div>
+    <div class="main">
+        {% if app.user %}
+            <a class="btn btn-primary add-button" href="/album/add">Add new album</a>
+        {% endif %}
+
+        <div id="albums"  class="container-page col-md-12">
+        {% for album in albums %}
+            <div class="list-item col-md-3">
+                <a href="/images/{{ album.id }}">
+                    <div>
+                        <div class="title text-center">{{ album.title }}</div>
+                        <div class="image-holder">
+                        {% if album.coverPhoto %}
+                            <img class="album-image" src="{{ album.coverPhoto.getWebPath() }}"/>
+                        {% else %}
+                            <div>No cover photo</div>
+                        {% endif %}
+                        </div>
+                    </div>
+                </a>
+                <div class="controls clearfix">
+                    {% if album.user == app.security.getToken().getUser() or is_granted('ROLE_SUPER_ADMIN') %}
+                        <a class="btn btn-default" href="/album/{{ album.id }}/edit">Edit</a>
+                        <a class="btn btn-danger" href="/album/{{ album.id }}/delete">Delete</a>
+                    {% endif %}
+                    <span class="date fr">{{ album.createdOn|date('Y-m-d H:i:s') }}</span>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets '@VisciukaiGalerijaBundle/Resources/public/css/*' filter='cssrewrite' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
 {% endblock %}

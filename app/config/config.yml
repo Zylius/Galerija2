@@ -33,7 +33,7 @@ twig:
 assetic:
     debug:          "%kernel.debug%"
     use_controller: false
-    bundles:        [ VisciukaiImagesBundle, VisciukaiLogsBundle ]
+    bundles:        [ VisciukaiImagesBundle, VisciukaiLogsBundle, VisciukaiGalerijaBundle ]
     #java: /usr/bin/java
     filters:
         cssrewrite: ~

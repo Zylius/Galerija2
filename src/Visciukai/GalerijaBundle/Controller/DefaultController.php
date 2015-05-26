@@ -8,6 +8,10 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('VisciukaiGalerijaBundle:Default:index.html.twig');
+        $albums = $this->getDoctrine()->getRepository('VisciukaiGalerijaBundle:Album')->findAll();
+        return $this->render('VisciukaiGalerijaBundle:Default:index.html.twig',
+            array(
+                'albums' => $albums
+            ));
     }
 }

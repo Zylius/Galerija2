@@ -1,0 +1,33 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}VisciukaiGalerijaBundle:Album:Add{% endblock %}
+{% block navbar_entries %}
+    <li class="active"><a href="/">Naujo albumo kūrimas</a></li>
+{% endblock %}
+{% block body %}
+    <div class="container-page col-md-12">
+        <br/>
+        <div class="container">
+            <div class="col-md-4"></div>
+            {{ form_start(form) }}
+            <div class="col-md-4 well image-form">
+                <b>Sukurti naują albumą</b>
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                <div class="form-group col-lg-12">
+                    {{ form_label(form.title) }}
+                    {{ form_widget(form.title, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.title) }}
+                </div>
+                {{ form_rest(form) }}
+                <div class="col-md-6">
+                    <input type="submit" class="btn btn-primary"  value="Sukurti" />
+                </div>
+                {{ form_end(form) }}
+            </div>
+            <div class="col-md-4"></div>
+
+
+        </div>
+    </div>
+{% endblock %}
